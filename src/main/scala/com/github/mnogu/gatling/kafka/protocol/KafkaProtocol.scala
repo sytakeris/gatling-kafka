@@ -7,10 +7,7 @@ import io.gatling.core.protocol.{Protocol, ProtocolKey}
 
 object KafkaProtocol {
 
-  def apply(configuration: GatlingConfiguration): KafkaProtocol = KafkaProtocol (
-    topic = "",
-    properties = Map()
-  )
+  def apply(configuration: GatlingConfiguration): KafkaProtocol = KafkaProtocol()
 
   val KafkaProtocolKey = new ProtocolKey {
 
@@ -34,10 +31,6 @@ object KafkaProtocol {
   }
 }
 
-case class KafkaProtocol(
-  topic: String,
-  properties: Map[String, Object]) extends Protocol {
-
-  def topic(topic: String): KafkaProtocol = copy(topic = topic)
+case class KafkaProtocol(properties: Map[String, Object] = Map()) extends Protocol {
   def properties(properties: Map[String, Object]): KafkaProtocol = copy(properties = properties)
 }

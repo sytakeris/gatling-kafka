@@ -8,8 +8,6 @@ import com.github.mnogu.gatling.kafka.Predef._
 
 class BasicSimulation extends Simulation {
   val kafkaConf = kafka
-    // Kafka topic name
-    .topic("test")
     // Kafka producer configs
     .properties(
       Map(
@@ -26,6 +24,7 @@ class BasicSimulation extends Simulation {
   val scn = scenario("Kafka Test")
     .exec(
       kafka("request")
+        .topic("test")
         // message to send
         .send[String]("foo"))
 

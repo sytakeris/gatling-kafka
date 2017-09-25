@@ -8,7 +8,6 @@ import com.github.mnogu.gatling.kafka.Predef._
 
 class FeederKeyValueSimulation extends Simulation {
   val kafkaConf = kafka
-    .topic("test")
     .properties(
       Map(
         ProducerConfig.ACKS_CONFIG -> "1",
@@ -30,7 +29,8 @@ class FeederKeyValueSimulation extends Simulation {
     //   ...
     //
     // And each line corresponds to a record sent to Kafka.
-    .exec(kafka("request").send[String, String]("${key}", "${value}"))
+    .exec(kafka("request").topic("test").send[String, String]("${key}", "${value}"))
+
 
   setUp(
     scn

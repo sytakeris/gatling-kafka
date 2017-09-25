@@ -8,7 +8,6 @@ import com.github.mnogu.gatling.kafka.Predef._
 
 class FeederSimulation extends Simulation {
   val kafkaConf = kafka
-    .topic("test")
     .properties(
       Map(
         ProducerConfig.ACKS_CONFIG -> "1",
@@ -21,7 +20,7 @@ class FeederSimulation extends Simulation {
   val scn = scenario("Kafka Test")
     // You can also use feeder
     .feed(csv("test.csv").circular)
-    .exec(kafka("request").send[String]("${foo}"))
+    .exec(kafka("request").topic("test").send[String]("${foo}"))
 
   setUp(
     scn

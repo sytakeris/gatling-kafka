@@ -8,8 +8,6 @@ import com.github.mnogu.gatling.kafka.Predef._
 
 class ThrottledSimulation extends Simulation {
   val kafkaConf = kafka
-    // Kafka topic name
-    .topic("test")
     // Kafka producer configs
     .properties(
     Map(
@@ -27,6 +25,7 @@ class ThrottledSimulation extends Simulation {
     .forever(
       exec(
         kafka("request")
+          .topic("test")
           // message to send
           .send[String]("foo"))
     )

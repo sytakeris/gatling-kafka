@@ -8,7 +8,6 @@ import com.github.mnogu.gatling.kafka.Predef._
 
 class ByteArraySimulation extends Simulation {
   val kafkaConf = kafka
-    .topic("test")
     .properties(
       Map(
         ProducerConfig.ACKS_CONFIG -> "1",
@@ -19,7 +18,7 @@ class ByteArraySimulation extends Simulation {
           "org.apache.kafka.common.serialization.ByteArraySerializer"))
 
   val scn = scenario("Kafka Test")
-    .exec(kafka("request").send("foo".getBytes: Array[Byte]))
+    .exec(kafka("request").topic("test").send("foo".getBytes: Array[Byte]))
 
   setUp(
     scn

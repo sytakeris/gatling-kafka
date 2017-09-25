@@ -8,7 +8,6 @@ import com.github.mnogu.gatling.kafka.Predef._
 
 class FeederByteArraySimulation extends Simulation {
   val kafkaConf = kafka
-    .topic("test")
     .properties(
       Map(
         ProducerConfig.ACKS_CONFIG -> "1",
@@ -22,6 +21,7 @@ class FeederByteArraySimulation extends Simulation {
     .feed(csv("test.csv").circular)
     .exec(
       kafka("request")
+        .topic("test")
         .send(session => session("foo").validate[String].map(s => s.getBytes)))
 
   setUp(

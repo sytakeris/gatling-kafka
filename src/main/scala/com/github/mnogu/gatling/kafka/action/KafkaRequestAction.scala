@@ -57,34 +57,31 @@ class KafkaRequestAction[K,V]( val producer: KafkaProducer[K,V],
 
       val record = kafkaAttributes.key match {
         case Some(k) =>
-          new ProducerRecord[K, V](kafkaProtocol.topic, k(session).get, payload)
+          new ProducerRecord[K, V](kafkaAttributes.topic, k(session).get, payload)
         case None =>
-          new ProducerRecord[K, V](kafkaProtocol.topic, payload)
+          new ProducerRecord[K, V](kafkaAttributes.topic, payload)
       }
 
       val requestStartDate = nowMillis
 
-      producer.send(record, new Callback() {
+      producer.send(record, (m: RecordMetadata, e: Exception) => {
 
-        override def onCompletion(m: RecordMetadata, e: Exception): Unit = {
+        val requestEndDate = nowMillis
+        statsEngine.logResponse(
+          session,
+          requestName,
+          ResponseTimings(startTimestamp = requestStartDate, endTimestamp = requestEndDate),
+          if (e == null) OK else KO,
+          None,
+          if (e == null) None else Some(e.getMessage)
+        )
 
-          val requestEndDate = nowMillis
-          statsEngine.logResponse(
-            session,
-            requestName,
-            ResponseTimings(startTimestamp = requestStartDate, endTimestamp = requestEndDate),
-            if (e == null) OK else KO,
-            None,
-            if (e == null) None else Some(e.getMessage)
-          )
-
-          if (throttled) {
-            coreComponents.throttler.throttle(session.scenario, () => next ! session)
-          } else {
-            next ! session
-          }
-
+        if (throttled) {
+          coreComponents.throttler.throttle(session.scenario, () => next ! session)
+        } else {
+          next ! session
         }
+
       })
 
     }
